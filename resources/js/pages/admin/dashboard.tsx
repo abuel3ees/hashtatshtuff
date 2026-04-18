@@ -35,6 +35,7 @@ export default function AdminDashboard({ leaderboard: initial, gameState: initSt
     const [interval, setIntervalSec]       = useState(initInterval);
     const [presentation, setPresentation]  = useState(initState === 'active');
     const [showDemo, setShowDemo]          = useState(() => typeof window !== 'undefined' && !window.localStorage.getItem('demo_seen'));
+    const [demoSwitches, setDemoSwitches]  = useState<boolean[]>(Array(8).fill(false));
     const prevBoard = useRef<Map<number, number>>(new Map());
     const deltaTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const pulseDuration = useRef(currentPulse ? Math.round((new Date(currentPulse.ends_at).getTime() - Date.now()) / 1000) : initInterval);
@@ -93,6 +94,9 @@ export default function AdminDashboard({ leaderboard: initial, gameState: initSt
 
     const progressPct = pulse ? (timeLeft / (pulseDuration.current || initInterval)) * 100 : 0;
     const bits = pulse ? Array.from({ length: 8 }, (_, i) => Boolean((pulse.number >> (7 - i)) & 1)) : Array(8).fill(false);
+    const DEMO_BIT_VALUES = [128, 64, 32, 16, 8, 4, 2, 1] as const;
+    const demoSum = demoSwitches.reduce((acc, on, i) => acc + (on ? DEMO_BIT_VALUES[i] : 0), 0);
+    const demoMatch = pulse !== null && demoSum === pulse.number;
 
     return (
         <>
@@ -158,47 +162,89 @@ export default function AdminDashboard({ leaderboard: initial, gameState: initSt
                             </div>
                         </div>
 
-                        {/* RIGHT — Demo */}
+                        {/* RIGHT — Interactive demo */}
                         {showDemo && (
-                            <div className="w-105 border-l border-zinc-900 p-10 flex flex-col gap-6" style={{ background: 'rgba(0,0,0,0.4)' }}>
+                            <div className="w-120 border-l border-zinc-900 p-8 flex flex-col gap-5" style={{ background: 'rgba(0,0,0,0.5)' }}>
                                 <div className="flex items-center justify-between">
-                                    <p className="text-xs text-zinc-500 tracking-[0.3em] uppercase" style={mono}>How to Play</p>
+                                    <div>
+                                        <p className="text-xs text-emerald-500 tracking-[0.3em] uppercase" style={mono}>Live Demo</p>
+                                        <p className="text-[10px] text-zinc-600 mt-0.5" style={mono}>Flip switches to match the target</p>
+                                    </div>
                                     <button onClick={() => { setShowDemo(false); window.localStorage.setItem('demo_seen', '1'); }}
                                         className="text-[10px] text-zinc-600 hover:text-zinc-400 transition-colors" style={mono}>
-                                        GOT IT ✕
+                                        HIDE ✕
                                     </button>
                                 </div>
 
-                                <div className="space-y-5 text-sm text-zinc-400 leading-relaxed" style={mono}>
-                                    <div>
-                                        <p className="text-emerald-400 text-xs mb-1">① TARGET</p>
-                                        <p>A random number 0–255 appears on screen.</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-emerald-400 text-xs mb-1">② BINARY</p>
-                                        <p>Each terminal has 8 DIP switches: 128, 64, 32, 16, 8, 4, 2, 1.</p>
-                                        <div className="flex gap-1 mt-2">
-                                            {[128, 64, 32, 16, 8, 4, 2, 1].map((v, i) => (
-                                                <div key={v} className="flex-1 text-center">
-                                                    <div style={{ width: '100%', aspectRatio: '1/2', background: i < 3 ? '#10b981' : '#27272a', borderRadius: 4, boxShadow: i < 3 ? '0 0 6px rgba(16,185,129,0.5)' : 'none' }} />
-                                                    <p className="text-[9px] text-zinc-600 mt-1">{v}</p>
+                                {/* DIP switches */}
+                                <div className="py-2">
+                                    <div className="flex gap-2 justify-center">
+                                        {DEMO_BIT_VALUES.map((val, idx) => {
+                                            const isOn = demoSwitches[idx];
+                                            return (
+                                                <div key={val} className="flex flex-col items-center gap-1.5">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setDemoSwitches(prev => { const n = [...prev]; n[idx] = !n[idx]; return n; })}
+                                                        style={{
+                                                            width: 42, height: 84,
+                                                            background: isOn ? 'rgba(5,46,22,0.8)' : 'rgba(24,24,27,0.9)',
+                                                            border: `2px solid ${isOn ? '#10b981' : 'rgba(63,63,70,0.8)'}`,
+                                                            borderRadius: 10,
+                                                            position: 'relative',
+                                                            cursor: 'pointer',
+                                                            transition: 'border-color 0.08s, background 0.08s',
+                                                            boxShadow: isOn ? '0 0 12px rgba(16,185,129,0.3)' : 'none',
+                                                        }}
+                                                    >
+                                                        <div style={{ position: 'absolute', left: 6, right: 6, top: '50%', height: 1, background: 'rgba(255,255,255,0.06)' }} />
+                                                        <div style={{
+                                                            position: 'absolute',
+                                                            left: 5, right: 5, height: 32,
+                                                            top: isOn ? 4 : undefined,
+                                                            bottom: isOn ? undefined : 4,
+                                                            background: isOn ? '#10b981' : '#3f3f46',
+                                                            borderRadius: 6,
+                                                            transition: 'top 0.08s ease, bottom 0.08s ease, background 0.08s',
+                                                            boxShadow: isOn ? '0 0 10px rgba(16,185,129,0.5)' : 'none',
+                                                        }} />
+                                                    </button>
+                                                    <span style={{ ...mono, fontSize: 11, color: isOn ? '#10b981' : '#52525b' }}>{val}</span>
                                                 </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <p className="text-emerald-400 text-xs mb-1">③ MATCH</p>
-                                        <p>Flip switches so their sum equals the target.</p>
-                                        <p className="text-zinc-600 text-xs mt-1">128 + 64 + 32 = 224</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-emerald-400 text-xs mb-1">④ POINTS</p>
-                                        <p>Faster = more points. Every pulse resets the clock.</p>
+                                            );
+                                        })}
                                     </div>
                                 </div>
 
-                                <div className="mt-auto pt-6 border-t border-zinc-900">
-                                    <p className="text-[10px] text-zinc-700 text-center" style={mono}>BINARY CLOCK · HASHTAT</p>
+                                {/* Sum → target feedback */}
+                                <div className="flex items-center justify-center gap-4 py-3 rounded-xl"
+                                    style={{ background: demoMatch ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.02)', border: `1px solid ${demoMatch ? 'rgba(16,185,129,0.4)' : 'rgba(255,255,255,0.05)'}`, transition: 'all 0.2s' }}>
+                                    <div className="text-center">
+                                        <p className="text-[9px] text-zinc-600 tracking-widest uppercase" style={mono}>YOUR SUM</p>
+                                        <p className="text-4xl font-bold" style={{ ...mono, color: demoMatch ? '#10b981' : '#f4f4f5' }}>{demoSum}</p>
+                                    </div>
+                                    <span className="text-3xl text-zinc-700">=</span>
+                                    <div className="text-center">
+                                        <p className="text-[9px] text-zinc-600 tracking-widest uppercase" style={mono}>TARGET</p>
+                                        <p className="text-4xl font-bold" style={{ ...mono, color: '#10b981' }}>{pulse?.number ?? '—'}</p>
+                                    </div>
+                                </div>
+
+                                {demoMatch && (
+                                    <p className="text-center text-emerald-400 text-sm tracking-widest" style={{ ...mono, animation: 'scoreFlash 1s ease-out infinite alternate' }}>
+                                        ✓ MATCH — POINTS AWARDED
+                                    </p>
+                                )}
+
+                                <button onClick={() => setDemoSwitches(Array(8).fill(false))}
+                                    className="text-[10px] text-zinc-600 hover:text-zinc-400 transition-colors py-1" style={mono}>
+                                    ↺ RESET SWITCHES
+                                </button>
+
+                                <div className="mt-auto pt-4 border-t border-zinc-900 space-y-1">
+                                    <p className="text-[10px] text-zinc-500 leading-relaxed" style={mono}>
+                                        Each terminal sees the same target. Flip switches so their values sum to the target. Faster answers = more points.
+                                    </p>
                                 </div>
                             </div>
                         )}
