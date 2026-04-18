@@ -82,9 +82,7 @@ export default function StudentDashboard({ user, gameState: initState, currentPu
     useEffect(() => {
         const echo = getEcho();
 
-        echo.channel('clock').listen('.pulse', () => {
-            window.location.reload();
-        });
+        const refreshId = setInterval(() => window.location.reload(), 10000);
 
         echo.channel('game').listen('.state', (e: { state: 'waiting' | 'active' }) => {
             setGameState(e.state);
@@ -96,7 +94,7 @@ export default function StudentDashboard({ user, gameState: initState, currentPu
             .joining((u: { is_admin: boolean }) => { if (!u.is_admin) setLobbyCount(c => c + 1); })
             .leaving((u: { is_admin: boolean }) => { if (!u.is_admin) setLobbyCount(c => Math.max(0, c - 1)); });
 
-        return () => { echo.leave('clock'); echo.leave('game'); echo.leave('game.lobby'); };
+        return () => { clearInterval(refreshId); echo.leave('game'); echo.leave('game.lobby'); };
     }, []);
 
     /* Auto-submit on match */
