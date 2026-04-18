@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\GameController;
 use App\Http\Middleware\EnsureAdmin;
+use App\Models\ClockPulse;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -33,6 +34,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [GameController::class, 'dashboard'])->name('dashboard');
     Route::post('/game/submit', [GameController::class, 'submit'])->name('game.submit');
+    Route::get('/game/pulse-id', fn () => response()->json([
+        'id' => ClockPulse::where('is_active', true)->value('id') ?? 0,
+    ]))->name('game.pulse-id');
 });
 
 require __DIR__.'/settings.php';

@@ -55,8 +55,83 @@ submitForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 submit.form = submitForm
 
+/**
+* @see routes/web.php:37
+* @route '/game/pulse-id'
+*/
+export const pulseId = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: pulseId.url(options),
+    method: 'get',
+})
+
+pulseId.definition = {
+    methods: ["get","head"],
+    url: '/game/pulse-id',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see routes/web.php:37
+* @route '/game/pulse-id'
+*/
+pulseId.url = (options?: RouteQueryOptions) => {
+    return pulseId.definition.url + queryParams(options)
+}
+
+/**
+* @see routes/web.php:37
+* @route '/game/pulse-id'
+*/
+pulseId.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: pulseId.url(options),
+    method: 'get',
+})
+
+/**
+* @see routes/web.php:37
+* @route '/game/pulse-id'
+*/
+pulseId.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: pulseId.url(options),
+    method: 'head',
+})
+
+/**
+* @see routes/web.php:37
+* @route '/game/pulse-id'
+*/
+const pulseIdForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: pulseId.url(options),
+    method: 'get',
+})
+
+/**
+* @see routes/web.php:37
+* @route '/game/pulse-id'
+*/
+pulseIdForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: pulseId.url(options),
+    method: 'get',
+})
+
+/**
+* @see routes/web.php:37
+* @route '/game/pulse-id'
+*/
+pulseIdForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: pulseId.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+pulseId.form = pulseIdForm
+
 const game = {
     submit: Object.assign(submit, submit),
+    pulseId: Object.assign(pulseId, pulseId),
 }
 
 export default game

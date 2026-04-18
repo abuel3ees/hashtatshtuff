@@ -78,24 +78,17 @@ export default function StudentDashboard({ user, gameState: initState, currentPu
         return () => clearInterval(id);
     }, [endsAt]);
 
-    /* Echo */
+    /* Poll for new pulse → hard reload */
     useEffect(() => {
-        const echo = getEcho();
-
-        echo.channel('clock').listen('.pulse', () => window.location.reload());
-
-        echo.channel('game').listen('.state', (e: { state: 'waiting' | 'active' }) => {
-            setGameState(e.state);
-            if (e.state === 'waiting') { setSwitches(Array(8).fill(false)); setSubmitted(false); }
-        });
-
-        echo.join('game.lobby')
-            .here((users: { id: number; is_admin: boolean }[]) => setLobbyCount(users.filter(u => !u.is_admin).length))
-            .joining((u: { is_admin: boolean }) => { if (!u.is_admin) setLobbyCount(c => c + 1); })
-            .leaving((u: { is_admin: boolean }) => { if (!u.is_admin) setLobbyCount(c => Math.max(0, c - 1)); });
-
-        return () => { echo.leave('clock'); echo.leave('game'); echo.leave('game.lobby'); };
-    }, []);
+        const initialId = currentPulse?.id ?? 0;
+        const poll = setInterval(() => {
+            fetch('/game/pulse-id', { headers: { Accept: 'application/json' } })
+                .then(r => r.json())
+                .then((d: { id: number }) => { if (d.id !== initialId) window.location.reload(); })
+                .catch(() => {});
+        }, 1000);
+        return () => clearInterval(poll);
+    }, [currentPulse?.id]);
 
     /* Auto-submit on match */
     useEffect(() => {

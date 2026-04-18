@@ -1,0 +1,121 @@
+name: hashtat
+region: nyc
+
+domains:
+  - domain: abuel3ees.dev
+    type: PRIMARY
+
+services:
+  - name: web
+    github:
+      repo: abuel3ees/hashtatfr
+      branch: main
+      deploy_on_push: true
+    build_command: composer install --no-dev --optimize-autoloader && php artisan config:cache && php artisan route:cache && php artisan view:cache
+    run_command: php artisan serve --host=0.0.0.0 --port=8080
+    http_port: 8080
+    instance_size_slug: basic-xxs
+    instance_count: 1
+    envs:
+      - key: APP_NAME
+        value: Hashtat
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        value: https://abuel3ees.dev
+      - key: APP_KEY
+        value: ""
+        type: SECRET
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: /workspace/database/database.sqlite
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: SESSION_DRIVER
+        value: database
+      - key: BROADCAST_CONNECTION
+        value: reverb
+      - key: REVERB_APP_ID
+        value: "403839"
+      - key: REVERB_APP_KEY
+        value: 3ou4qguoovlqfu4rdw3k
+      - key: REVERB_APP_SECRET
+        value: ""
+        type: SECRET
+      - key: REVERB_HOST
+        value: abuel3ees.dev
+      - key: REVERB_PORT
+        value: "443"
+      - key: REVERB_SCHEME
+        value: https
+      - key: VITE_REVERB_APP_KEY
+        value: 3ou4qguoovlqfu4rdw3k
+      - key: VITE_REVERB_HOST
+        value: abuel3ees.dev
+      - key: VITE_REVERB_PORT
+        value: "443"
+      - key: VITE_REVERB_SCHEME
+        value: https
+
+workers:
+  - name: queue
+    github:
+      repo: abuel3ees/hashtatfr
+      branch: main
+      deploy_on_push: true
+    run_command: php artisan queue:work --tries=3 --timeout=90
+    instance_size_slug: basic-xxs
+    instance_count: 1
+    envs:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        value: ""
+        type: SECRET
+      - key: APP_URL
+        value: https://abuel3ees.dev
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: /workspace/database/database.sqlite
+      - key: QUEUE_CONNECTION
+        value: database
+
+  - name: reverb
+    github:
+      repo: abuel3ees/hashtatfr
+      branch: main
+      deploy_on_push: true
+    run_command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    instance_size_slug: basic-xxs
+    instance_count: 1
+    envs:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        value: ""
+        type: SECRET
+      - key: APP_URL
+        value: https://abuel3ees.dev
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: /workspace/database/database.sqlite
+      - key: REVERB_APP_ID
+        value: "403839"
+      - key: REVERB_APP_KEY
+        value: 3ou4qguoovlqfu4rdw3k
+      - key: REVERB_APP_SECRET
+        value: ""
+        type: SECRET
+      - key: REVERB_HOST
+        value: abuel3ees.dev
+      - key: REVERB_PORT
+        value: "443"
+      - key: REVERB_SCHEME
+        value: https

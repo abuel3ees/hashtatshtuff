@@ -66,19 +66,17 @@ export default function AdminDashboard({ leaderboard: initial, gameState: initSt
         }
     };
 
-    /* Echo */
+    /* Poll for new pulse → hard reload */
     useEffect(() => {
-        prevBoard.current = new Map(initial.map(e => [e.id, e.points]));
-        const echo = getEcho();
-        echo.channel('clock').listen('.pulse', () => window.location.reload());
-        echo.channel('leaderboard').listen('.updated', (e: { leaderboard: LeaderboardEntry[] }) => applyBoardUpdate(e.leaderboard));
-        echo.channel('game').listen('.state', (e: { state: 'waiting' | 'active' }) => setGameState(e.state));
-        echo.join('game.lobby')
-            .here((users: LobbyUser[]) => setLobby(users.filter(u => !u.is_admin)))
-            .joining((u: LobbyUser) => { if (!u.is_admin) setLobby(p => [...p.filter(x => x.id !== u.id), u]); })
-            .leaving((u: LobbyUser) => setLobby(p => p.filter(x => x.id !== u.id)));
-        return () => { echo.leave('clock'); echo.leave('leaderboard'); echo.leave('game'); echo.leave('game.lobby'); };
-    }, []);
+        const initialId = currentPulse?.id ?? 0;
+        const poll = setInterval(() => {
+            fetch('/game/pulse-id', { headers: { Accept: 'application/json' } })
+                .then(r => r.json())
+                .then((d: { id: number }) => { if (d.id !== initialId) window.location.reload(); })
+                .catch(() => {});
+        }, 1000);
+        return () => clearInterval(poll);
+    }, [currentPulse?.id]);
 
     const progressPct = pulse ? (timeLeft / (pulseDuration.current || initInterval)) * 100 : 0;
     const bits = pulse ? Array.from({ length: 8 }, (_, i) => Boolean((pulse.number >> (7 - i)) & 1)) : Array(8).fill(false);

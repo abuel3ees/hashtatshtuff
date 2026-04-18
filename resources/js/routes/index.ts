@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../wayfinder'
 /**
-* @see routes/web.php:16
+* @see routes/web.php:17
 * @route '/login'
 */
 export const login = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ login.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:16
+* @see routes/web.php:17
 * @route '/login'
 */
 login.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ login.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:16
+* @see routes/web.php:17
 * @route '/login'
 */
 login.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -31,7 +31,7 @@ login.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:16
+* @see routes/web.php:17
 * @route '/login'
 */
 login.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -40,7 +40,7 @@ login.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:16
+* @see routes/web.php:17
 * @route '/login'
 */
 const loginForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -49,7 +49,7 @@ const loginForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 })
 
 /**
-* @see routes/web.php:16
+* @see routes/web.php:17
 * @route '/login'
 */
 loginForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -58,7 +58,7 @@ loginForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:16
+* @see routes/web.php:17
 * @route '/login'
 */
 loginForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -211,7 +211,7 @@ registerForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 register.form = registerForm
 
 /**
-* @see routes/web.php:10
+* @see routes/web.php:11
 * @route '/presentation'
 */
 export const presentation = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -225,7 +225,7 @@ presentation.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:10
+* @see routes/web.php:11
 * @route '/presentation'
 */
 presentation.url = (options?: RouteQueryOptions) => {
@@ -233,7 +233,7 @@ presentation.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:10
+* @see routes/web.php:11
 * @route '/presentation'
 */
 presentation.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -242,7 +242,7 @@ presentation.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:10
+* @see routes/web.php:11
 * @route '/presentation'
 */
 presentation.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -251,7 +251,7 @@ presentation.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:10
+* @see routes/web.php:11
 * @route '/presentation'
 */
 const presentationForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -260,7 +260,7 @@ const presentationForm = (options?: RouteQueryOptions): RouteFormDefinition<'get
 })
 
 /**
-* @see routes/web.php:10
+* @see routes/web.php:11
 * @route '/presentation'
 */
 presentationForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -269,7 +269,7 @@ presentationForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 })
 
 /**
-* @see routes/web.php:10
+* @see routes/web.php:11
 * @route '/presentation'
 */
 presentationForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -285,7 +285,7 @@ presentationForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'
 presentation.form = presentationForm
 
 /**
-* @see routes/web.php:15
+* @see routes/web.php:16
 * @route '/'
 */
 export const home = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -299,7 +299,7 @@ home.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:15
+* @see routes/web.php:16
 * @route '/'
 */
 home.url = (options?: RouteQueryOptions) => {
@@ -307,7 +307,7 @@ home.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:15
+* @see routes/web.php:16
 * @route '/'
 */
 home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -316,7 +316,7 @@ home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:15
+* @see routes/web.php:16
 * @route '/'
 */
 home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -325,7 +325,7 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:15
+* @see routes/web.php:16
 * @route '/'
 */
 const homeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -334,7 +334,7 @@ const homeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:15
+* @see routes/web.php:16
 * @route '/'
 */
 homeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -343,7 +343,7 @@ homeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:15
+* @see routes/web.php:16
 * @route '/'
 */
 homeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
