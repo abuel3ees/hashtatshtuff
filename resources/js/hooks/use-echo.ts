@@ -10,13 +10,14 @@ export function getEcho(): Echo<'reverb'> {
         const csrfToken = document.head
             .querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '';
 
+        const isSecure = window.location.protocol === 'https:';
         instance = new Echo({
             broadcaster: 'reverb',
             key: import.meta.env.VITE_REVERB_APP_KEY as string,
-            wsHost: import.meta.env.VITE_REVERB_HOST as string,
-            wsPort: parseInt(import.meta.env.VITE_REVERB_PORT ?? '8080'),
-            wssPort: parseInt(import.meta.env.VITE_REVERB_PORT ?? '8080'),
-            forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'http') === 'https',
+            wsHost: window.location.hostname,
+            wsPort: isSecure ? 443 : 80,
+            wssPort: 443,
+            forceTLS: isSecure,
             enabledTransports: ['ws', 'wss'],
             authEndpoint: '/broadcasting/auth',
             auth: { headers: { 'X-CSRF-TOKEN': csrfToken } },

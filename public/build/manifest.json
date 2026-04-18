@@ -200,8 +200,8 @@
       "_compiler-runtime-8Pw0jezI.js"
     ]
   },
-  "_use-echo-xiqe2nlU.js": {
-    "file": "assets/use-echo-xiqe2nlU.js",
+  "_use-echo-tV97IZcI.js": {
+    "file": "assets/use-echo-tV97IZcI.js",
     "name": "use-echo",
     "imports": [
       "_jsx-runtime-D4YRtkEi.js"
@@ -238,7 +238,7 @@
     "isEntry": true
   },
   "resources/js/app.tsx": {
-    "file": "assets/app-C5gwVICb.js",
+    "file": "assets/app-CFhleGx0.js",
     "name": "app",
     "src": "resources/js/app.tsx",
     "isEntry": true,
@@ -279,13 +279,13 @@
     ]
   },
   "resources/js/pages/admin/dashboard.tsx": {
-    "file": "assets/dashboard-ZVKqg2G3.js",
+    "file": "assets/dashboard-B_ftyU2N.js",
     "name": "dashboard",
     "src": "resources/js/pages/admin/dashboard.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_jsx-runtime-D4YRtkEi.js",
-      "_use-echo-xiqe2nlU.js"
+      "_use-echo-tV97IZcI.js"
     ]
   },
   "resources/js/pages/auth/confirm-password.tsx": {
@@ -500,13 +500,13 @@
     ]
   },
   "resources/js/pages/student/dashboard.tsx": {
-    "file": "assets/dashboard-Bcx1HBWr.js",
+    "file": "assets/dashboard-DPAw6ZH_.js",
     "name": "dashboard",
     "src": "resources/js/pages/student/dashboard.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_jsx-runtime-D4YRtkEi.js",
-      "_use-echo-xiqe2nlU.js",
+      "_use-echo-tV97IZcI.js",
       "_compiler-runtime-8Pw0jezI.js"
     ]
   },
