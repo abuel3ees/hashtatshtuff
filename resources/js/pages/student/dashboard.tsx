@@ -82,13 +82,8 @@ export default function StudentDashboard({ user, gameState: initState, currentPu
     useEffect(() => {
         const echo = getEcho();
 
-        echo.channel('clock').listen('.pulse', (e: { number: number; pulseId: number; endsAt: string }) => {
-            const end = new Date(e.endsAt).getTime();
-            pulseDuration.current = Math.round((end - Date.now()) / 1000);
-            setTarget(e.number);
-            setSwitches(Array(8).fill(false));
-            setEndsAt(end);
-            setSubmitted(false);
+        echo.channel('clock').listen('.pulse', () => {
+            window.location.reload();
         });
 
         echo.channel('game').listen('.state', (e: { state: 'waiting' | 'active' }) => {

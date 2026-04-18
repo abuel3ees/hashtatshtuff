@@ -70,9 +70,8 @@ export default function AdminDashboard({ leaderboard: initial, gameState: initSt
     useEffect(() => {
         prevBoard.current = new Map(initial.map(e => [e.id, e.points]));
         const echo = getEcho();
-        echo.channel('clock').listen('.pulse', (e: { number: number; pulseId: number; endsAt: string }) => {
-            pulseDuration.current = Math.round((new Date(e.endsAt).getTime() - Date.now()) / 1000);
-            setPulse({ id: e.pulseId, number: e.number, ends_at: e.endsAt });
+        echo.channel('clock').listen('.pulse', () => {
+            window.location.reload();
         });
         echo.channel('leaderboard').listen('.updated', (e: { leaderboard: LeaderboardEntry[] }) => applyBoardUpdate(e.leaderboard));
         echo.channel('game').listen('.state', (e: { state: 'waiting' | 'active' }) => setGameState(e.state));
