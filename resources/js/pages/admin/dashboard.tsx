@@ -33,6 +33,8 @@ export default function AdminDashboard({ leaderboard: initial, gameState: initSt
     const [boardFlash, setBoardFlash] = useState(false);
     const [confirmRemove, setConfirmRemove] = useState(false);
     const [interval, setIntervalSec]       = useState(initInterval);
+    const [presentation, setPresentation]  = useState(initState === 'active');
+    const [showDemo, setShowDemo]          = useState(() => typeof window !== 'undefined' && !window.localStorage.getItem('demo_seen'));
     const prevBoard = useRef<Map<number, number>>(new Map());
     const deltaTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const pulseDuration = useRef(currentPulse ? Math.round((new Date(currentPulse.ends_at).getTime() - Date.now()) / 1000) : initInterval);
@@ -114,6 +116,96 @@ export default function AdminDashboard({ leaderboard: initial, gameState: initSt
                 .board-pulse { animation: boardPulse 0.6s ease-in-out; }
             `}</style>
 
+            {presentation && gameState === 'active' && (
+                <div className="fixed inset-0 z-50 bg-zinc-950 text-white overflow-hidden" style={GRID}>
+                    <button onClick={() => setPresentation(false)}
+                        className="absolute top-5 right-5 text-xs text-zinc-600 hover:text-zinc-300 transition-colors z-10"
+                        style={mono}>
+                        ✕ CLOSE
+                    </button>
+
+                    <div className="h-full flex">
+                        {/* LEFT — Main stage */}
+                        <div className="flex-1 flex flex-col items-center justify-center gap-12 px-12">
+                            <div className="text-center">
+                                <p className="text-sm text-zinc-600 tracking-[0.3em] uppercase mb-6" style={mono}>TARGET NUMBER</p>
+                                {pulse ? (
+                                    <>
+                                        <div style={{ ...mono, fontSize: 'clamp(180px, 28vw, 360px)', fontWeight: 700, lineHeight: 1, color: '#10b981', textShadow: '0 0 60px rgba(16,185,129,0.4)' }}>
+                                            {pulse.number}
+                                        </div>
+                                        <p className="text-3xl text-zinc-500 mt-6 tracking-widest" style={mono}>
+                                            {pulse.number.toString(2).padStart(8, '0')}
+                                        </p>
+                                    </>
+                                ) : (
+                                    <div style={{ ...mono, fontSize: 'clamp(180px, 28vw, 360px)', color: '#27272a' }}>—</div>
+                                )}
+                            </div>
+
+                            {/* Countdown bar */}
+                            <div className="w-full max-w-2xl">
+                                <div className="flex justify-between items-baseline mb-3">
+                                    <span className="text-xs text-zinc-600 tracking-[0.3em]" style={mono}>TIME REMAINING</span>
+                                    <span className="text-6xl font-bold" style={{ ...mono, color: timeLeft <= 5 ? '#ef4444' : '#10b981' }}>
+                                        {timeLeft}s
+                                    </span>
+                                </div>
+                                <div className="h-3 bg-zinc-900 rounded-full overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
+                                    <div className="h-full rounded-full transition-all duration-300"
+                                        style={{ width: `${progressPct}%`, background: timeLeft <= 5 ? '#ef4444' : '#10b981', boxShadow: `0 0 20px ${timeLeft <= 5 ? 'rgba(239,68,68,0.6)' : 'rgba(16,185,129,0.6)'}` }} />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* RIGHT — Demo */}
+                        {showDemo && (
+                            <div className="w-105 border-l border-zinc-900 p-10 flex flex-col gap-6" style={{ background: 'rgba(0,0,0,0.4)' }}>
+                                <div className="flex items-center justify-between">
+                                    <p className="text-xs text-zinc-500 tracking-[0.3em] uppercase" style={mono}>How to Play</p>
+                                    <button onClick={() => { setShowDemo(false); window.localStorage.setItem('demo_seen', '1'); }}
+                                        className="text-[10px] text-zinc-600 hover:text-zinc-400 transition-colors" style={mono}>
+                                        GOT IT ✕
+                                    </button>
+                                </div>
+
+                                <div className="space-y-5 text-sm text-zinc-400 leading-relaxed" style={mono}>
+                                    <div>
+                                        <p className="text-emerald-400 text-xs mb-1">① TARGET</p>
+                                        <p>A random number 0–255 appears on screen.</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-emerald-400 text-xs mb-1">② BINARY</p>
+                                        <p>Each terminal has 8 DIP switches: 128, 64, 32, 16, 8, 4, 2, 1.</p>
+                                        <div className="flex gap-1 mt-2">
+                                            {[128, 64, 32, 16, 8, 4, 2, 1].map((v, i) => (
+                                                <div key={v} className="flex-1 text-center">
+                                                    <div style={{ width: '100%', aspectRatio: '1/2', background: i < 3 ? '#10b981' : '#27272a', borderRadius: 4, boxShadow: i < 3 ? '0 0 6px rgba(16,185,129,0.5)' : 'none' }} />
+                                                    <p className="text-[9px] text-zinc-600 mt-1">{v}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p className="text-emerald-400 text-xs mb-1">③ MATCH</p>
+                                        <p>Flip switches so their sum equals the target.</p>
+                                        <p className="text-zinc-600 text-xs mt-1">128 + 64 + 32 = 224</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-emerald-400 text-xs mb-1">④ POINTS</p>
+                                        <p>Faster = more points. Every pulse resets the clock.</p>
+                                    </div>
+                                </div>
+
+                                <div className="mt-auto pt-6 border-t border-zinc-900">
+                                    <p className="text-[10px] text-zinc-700 text-center" style={mono}>BINARY CLOCK · HASHTAT</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
             <div className="min-h-screen bg-zinc-950 text-white" style={GRID}>
                 <div className="max-w-6xl mx-auto px-4 md:px-8 py-6">
 
@@ -184,7 +276,7 @@ export default function AdminDashboard({ leaderboard: initial, gameState: initSt
                                 {/* Action buttons */}
                                 <div className="flex gap-3 pt-1">
                                     {gameState === 'waiting' ? (
-                                        <button onClick={() => router.post('/admin/game/start')}
+                                        <button onClick={() => { setPresentation(true); router.post('/admin/game/start'); }}
                                             className="flex-1 py-3.5 rounded-xl font-bold text-sm tracking-widest uppercase transition-all"
                                             style={{ ...mono, background: 'rgba(16,185,129,0.15)', border: '1.5px solid #10b981', color: '#10b981', boxShadow: '0 0 24px rgba(16,185,129,0.15)' }}>
                                             ▶  START GAME
@@ -204,6 +296,13 @@ export default function AdminDashboard({ leaderboard: initial, gameState: initSt
                                                 onMouseEnter={e => (e.currentTarget.style.color = '#fbbf24')}
                                                 onMouseLeave={e => (e.currentTarget.style.color = '#71717a')}>
                                                 ↺ RESET GAME
+                                            </button>
+                                            <button onClick={() => setPresentation(true)}
+                                                className="flex-1 py-3 rounded-xl text-sm tracking-widest uppercase transition-colors"
+                                                style={{ ...mono, border: '1px solid rgba(16,185,129,0.3)', color: '#71717a' }}
+                                                onMouseEnter={e => (e.currentTarget.style.color = '#10b981')}
+                                                onMouseLeave={e => (e.currentTarget.style.color = '#71717a')}>
+                                                ⛶ PRESENT
                                             </button>
                                         </>
                                     )}
