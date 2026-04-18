@@ -35,6 +35,7 @@ export default function AdminDashboard({ leaderboard: initial, gameState: initSt
     const [interval, setIntervalSec]       = useState(initInterval);
     const prevBoard = useRef<Map<number, number>>(new Map());
     const deltaTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const pulseDuration = useRef(currentPulse ? Math.round((new Date(currentPulse.ends_at).getTime() - Date.now()) / 1000) : initInterval);
 
     const flash = (usePage().props as Record<string, string>).success ?? null;
     const { data, setData, post, processing } = useForm({ count: 30 });
@@ -69,7 +70,10 @@ export default function AdminDashboard({ leaderboard: initial, gameState: initSt
     useEffect(() => {
         prevBoard.current = new Map(initial.map(e => [e.id, e.points]));
         const echo = getEcho();
-        echo.channel('clock').listen('.pulse', (e: ClockPulse) => setPulse(e));
+        echo.channel('clock').listen('.pulse', (e: { number: number; pulseId: number; endsAt: string }) => {
+            pulseDuration.current = Math.round((new Date(e.endsAt).getTime() - Date.now()) / 1000);
+            setPulse({ id: e.pulseId, number: e.number, ends_at: e.endsAt });
+        });
         echo.channel('leaderboard').listen('.updated', (e: { leaderboard: LeaderboardEntry[] }) => applyBoardUpdate(e.leaderboard));
         echo.channel('game').listen('.state', (e: { state: 'waiting' | 'active' }) => setGameState(e.state));
         echo.join('game.lobby')
@@ -79,7 +83,7 @@ export default function AdminDashboard({ leaderboard: initial, gameState: initSt
         return () => { echo.leave('clock'); echo.leave('leaderboard'); echo.leave('game'); echo.leave('game.lobby'); };
     }, []);
 
-    const progressPct = pulse ? (timeLeft / 20) * 100 : 0;
+    const progressPct = pulse ? (timeLeft / (pulseDuration.current || initInterval)) * 100 : 0;
     const bits = pulse ? Array.from({ length: 8 }, (_, i) => Boolean((pulse.number >> (7 - i)) & 1)) : Array(8).fill(false);
 
     return (
