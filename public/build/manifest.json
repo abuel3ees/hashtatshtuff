@@ -231,7 +231,7 @@
     "isEntry": true
   },
   "resources/js/app.tsx": {
-    "file": "assets/app-CPaU0x8z.js",
+    "file": "assets/app-cINtIC5L.js",
     "name": "app",
     "src": "resources/js/app.tsx",
     "isEntry": true,
@@ -272,7 +272,7 @@
     ]
   },
   "resources/js/pages/admin/dashboard.tsx": {
-    "file": "assets/dashboard-SuQ6yo5v.js",
+    "file": "assets/dashboard-Atw-J4xF.js",
     "name": "dashboard",
     "src": "resources/js/pages/admin/dashboard.tsx",
     "isDynamicEntry": true,
@@ -492,7 +492,7 @@
     ]
   },
   "resources/js/pages/student/dashboard.tsx": {
-    "file": "assets/dashboard-DrVehrbo.js",
+    "file": "assets/dashboard-aVjw2XZs.js",
     "name": "dashboard",
     "src": "resources/js/pages/student/dashboard.tsx",
     "isDynamicEntry": true,

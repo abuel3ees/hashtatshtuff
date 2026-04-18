@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\GameController;
 use App\Http\Middleware\EnsureAdmin;
 use App\Models\ClockPulse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -37,6 +39,28 @@ Route::middleware('auth')->group(function () {
     Route::get('/game/pulse-id', fn () => response()->json([
         'id' => ClockPulse::where('is_active', true)->value('id') ?? 0,
     ]))->name('game.pulse-id');
+
+    Route::post('/game/heartbeat', function () {
+        $user = Auth::user();
+        $online = Cache::get('online_users', []);
+        $online[$user->id] = [
+            'id' => $user->id,
+            'callsign' => $user->callsign(),
+            'terminal' => $user->name,
+            'is_admin' => $user->is_admin,
+            'ts' => now()->timestamp,
+        ];
+        Cache::put('online_users', $online, 60);
+        return response()->json(['ok' => true]);
+    })->name('game.heartbeat');
+
+    Route::get('/admin/lobby', function () {
+        $cutoff = now()->timestamp - 10;
+        $online = collect(Cache::get('online_users', []))
+            ->filter(fn ($u) => $u['ts'] >= $cutoff && ! $u['is_admin'])
+            ->values();
+        return response()->json(['users' => $online]);
+    })->middleware(EnsureAdmin::class)->name('admin.lobby');
 });
 
 require __DIR__.'/settings.php';

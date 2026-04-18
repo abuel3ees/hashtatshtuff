@@ -78,6 +78,17 @@ export default function AdminDashboard({ leaderboard: initial, gameState: initSt
         return () => clearInterval(poll);
     }, [currentPulse?.id]);
 
+    /* Poll lobby every 2s */
+    useEffect(() => {
+        const fetchLobby = () => fetch('/admin/lobby', { headers: { Accept: 'application/json' } })
+            .then(r => r.json())
+            .then((d: { users: LobbyUser[] }) => setLobby(d.users))
+            .catch(() => {});
+        fetchLobby();
+        const id = setInterval(fetchLobby, 2000);
+        return () => clearInterval(id);
+    }, []);
+
     const progressPct = pulse ? (timeLeft / (pulseDuration.current || initInterval)) * 100 : 0;
     const bits = pulse ? Array.from({ length: 8 }, (_, i) => Boolean((pulse.number >> (7 - i)) & 1)) : Array(8).fill(false);
 

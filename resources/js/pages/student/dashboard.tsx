@@ -90,6 +90,18 @@ export default function StudentDashboard({ user, gameState: initState, currentPu
         return () => clearInterval(poll);
     }, [currentPulse?.id]);
 
+    /* Heartbeat so admin sees us in lobby */
+    useEffect(() => {
+        const xsrf = () => decodeURIComponent(document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '');
+        const beat = () => fetch('/game/heartbeat', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-XSRF-TOKEN': xsrf() },
+        }).catch(() => {});
+        beat();
+        const id = setInterval(beat, 3000);
+        return () => clearInterval(id);
+    }, []);
+
     /* Auto-submit on match */
     useEffect(() => {
         if (!isMatch || submitted) return;
